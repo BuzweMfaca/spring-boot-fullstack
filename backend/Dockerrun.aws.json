@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "uhuru-api",
-      "image": "mazwana/uhuru-api:latest",
+      "image": "mazwana/uhuru-api:07.06.2023.12.17.31",
       "essential": true,
       "memory": 512,
       "portMappings": [
