@@ -1,6 +1,5 @@
 package com.uhuru.customer;
 
-import jakarta.persistence.Column;
 
 public class CustomerRegistrationRequest {
     private String name;
