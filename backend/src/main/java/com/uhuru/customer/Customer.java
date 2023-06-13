@@ -37,21 +37,26 @@ public class Customer {
     private String email;
     @Column(nullable = false)
     private Integer age;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     public Customer() {
     }
 
-    public Customer(Integer id, String name, String email, Integer age) {
+    public Customer(Integer id, String name, String email, Integer age, Gender gender) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
     }
 
-    public Customer(String name, String email, Integer age) {
+    public Customer(String name, String email, Integer age, Gender gender) {
         this.name = name;
         this.email = email;
         this.age = age;
+        this.gender = gender;
     }
 
     public Integer getId() {
@@ -86,16 +91,24 @@ public class Customer {
         this.age = age;
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Customer customer)) return false;
-        return Objects.equals(getId(), customer.getId()) && Objects.equals(getName(), customer.getName()) && Objects.equals(getEmail(), customer.getEmail()) && Objects.equals(getAge(), customer.getAge());
+        return Objects.equals(getId(), customer.getId()) && Objects.equals(getName(), customer.getName()) && Objects.equals(getEmail(), customer.getEmail()) && Objects.equals(getAge(), customer.getAge()) && Objects.equals(getGender(), customer.getGender());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getEmail(), getAge());
+        return Objects.hash(getId(), getName(), getEmail(), getAge(), getGender());
     }
 
     @Override
@@ -104,7 +117,8 @@ public class Customer {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
-                ", age=" + age +
+                ", age=" + age + '\'' +
+                ", gender=" + gender +
                 '}';
     }
 }

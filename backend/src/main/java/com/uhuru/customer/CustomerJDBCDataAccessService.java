@@ -23,7 +23,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public List<Customer> selectAllCustomers() {
 
         String sql = """
-                        SELECT id, name, email, age 
+                        SELECT id, name, email, age, gender 
                         FROM customer
                     """;
 
@@ -36,7 +36,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public Optional<Customer> selectCustomerById(Integer id) {
 
         String sql = """
-                        SELECT id, name, email, age 
+                        SELECT id, name, email, age , gender
                         FROM customer
                         Where id = ?
                     """;
@@ -51,15 +51,16 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public void insertCustomer(Customer customer) {
 
         String sql = """
-                        INSERT INTO customer(name, email, age)
-                        VALUES(?,?,?)
+                        INSERT INTO customer(name, email, age, gender)
+                        VALUES(?,?,?,?)
                      """;
 
         int result = jdbcTemplate.update(
                 sql,
                 customer.getName(),
                 customer.getEmail(),
-                customer.getAge()
+                customer.getAge(),
+                customer.getGender().name()
         );
 
     }

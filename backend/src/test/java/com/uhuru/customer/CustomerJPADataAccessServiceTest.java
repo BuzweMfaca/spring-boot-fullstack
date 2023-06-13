@@ -58,8 +58,8 @@ class CustomerJPADataAccessServiceTest {
                  1,
                  "test",
                  "test@gmail.com",
-                 21
-
+                 21,
+                 Gender.MALE
          );
 
         // When

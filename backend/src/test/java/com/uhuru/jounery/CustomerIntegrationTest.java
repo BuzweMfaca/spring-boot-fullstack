@@ -3,6 +3,7 @@ package com.uhuru.jounery;
 
 import com.uhuru.customer.Customer;
 import com.uhuru.customer.CustomerRegistrationRequest;
+import com.uhuru.customer.Gender;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,10 +39,13 @@ public class CustomerIntegrationTest {
         String email = firstName + "." + lastName + "-" + UUID.randomUUID() + "@foobarhello1.com";
         int age = RANDOM.nextInt(1, 10);
 
+
         CustomerRegistrationRequest request = new CustomerRegistrationRequest();
         request.setName(firstName + " " + lastName);
         request.setEmail(email);
         request.setAge(age);
+        request.setGender(String.valueOf(Gender.MALE));
+
 
         // send a post request
         webTestClient.post()
@@ -77,7 +81,8 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
-                age
+                age,
+                Gender.MALE
         );
 
         assertThat(allCustomers)
@@ -111,6 +116,7 @@ public class CustomerIntegrationTest {
         request.setName(firstName + " " + lastName);
         request.setEmail(email);
         request.setAge(age);
+        request.setGender(String.valueOf(Gender.MALE));
 
         // send a post request
         webTestClient.post()
@@ -146,7 +152,8 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
-                age
+                age,
+                Gender.MALE
         );
 
         assertThat(allCustomers)
@@ -186,6 +193,7 @@ public class CustomerIntegrationTest {
         request.setName(firstName + " " + lastName);
         request.setEmail(email);
         request.setAge(age);
+        request.setGender(String.valueOf(Gender.MALE));
 
         // send a post request
         webTestClient.post()
@@ -221,7 +229,8 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
-                age
+                age,
+                Gender.MALE
         );
 
         assertThat(allCustomers)
@@ -251,7 +260,8 @@ public class CustomerIntegrationTest {
                 id,
                 updateFirstName + " " + updateLastName,
                 email,
-                updateAge
+                updateAge,
+                Gender.MALE
         );
 
         webTestClient.get()
