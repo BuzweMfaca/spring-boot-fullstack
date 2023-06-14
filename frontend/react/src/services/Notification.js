@@ -1,6 +1,6 @@
 import { createStandaloneToast } from '@chakra-ui/react'
 
-const { ToastContainer, toast } = createStandaloneToast()
+const { toast } = createStandaloneToast()
 
 const notification = (title, description, status) => {
     toast({
