@@ -39,13 +39,7 @@ public class CustomerIntegrationTest {
         String email = firstName + "." + lastName + "-" + UUID.randomUUID() + "@foobarhello1.com";
         int age = RANDOM.nextInt(1, 10);
 
-
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest();
-        request.setName(firstName + " " + lastName);
-        request.setEmail(email);
-        request.setAge(age);
-        request.setGender(String.valueOf(Gender.MALE));
-
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(firstName + " " + lastName, email, "password", age, Gender.MALE);
 
         // send a post request
         webTestClient.post()
@@ -81,9 +75,9 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
+                "password",
                 age,
-                Gender.MALE
-        );
+                Gender.MALE);
 
         assertThat(allCustomers)
                 //.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
@@ -112,11 +106,7 @@ public class CustomerIntegrationTest {
         String email = firstName + "." + lastName + "-" + UUID.randomUUID() + "@foobarhello1.com";
         int age = RANDOM.nextInt(1, 10);
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest();
-        request.setName(firstName + " " + lastName);
-        request.setEmail(email);
-        request.setAge(age);
-        request.setGender(String.valueOf(Gender.MALE));
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(firstName + " " + lastName, email, "password", age,Gender.MALE);
 
         // send a post request
         webTestClient.post()
@@ -152,9 +142,9 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
+                "password",
                 age,
-                Gender.MALE
-        );
+                Gender.MALE);
 
         assertThat(allCustomers)
                 //.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
@@ -189,11 +179,7 @@ public class CustomerIntegrationTest {
         String email = firstName + "." + lastName + "-" + UUID.randomUUID() + "@foobarhello1.com";
         int age = RANDOM.nextInt(1, 10);
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest();
-        request.setName(firstName + " " + lastName);
-        request.setEmail(email);
-        request.setAge(age);
-        request.setGender(String.valueOf(Gender.MALE));
+        CustomerRegistrationRequest request = new CustomerRegistrationRequest(firstName + " " + lastName, email, "password", age, Gender.MALE);
 
         // send a post request
         webTestClient.post()
@@ -229,9 +215,9 @@ public class CustomerIntegrationTest {
                 id,
                 firstName + " " + lastName,
                 email,
+                "password",
                 age,
-                Gender.MALE
-        );
+                Gender.MALE);
 
         assertThat(allCustomers)
                 //.usingRecursiveFieldByFieldElementComparatorIgnoringFields("id")
@@ -242,9 +228,12 @@ public class CustomerIntegrationTest {
         String updateLastName = faker.name().lastName();
         int updateAge = RANDOM.nextInt(1, 10);
 
-        CustomerRegistrationRequest updateRequest = new CustomerRegistrationRequest();
-        updateRequest.setName(updateFirstName + " " + updateLastName);
-        updateRequest.setAge(updateAge);
+        CustomerRegistrationRequest updateRequest = new CustomerRegistrationRequest(
+                updateFirstName + " " + updateLastName,
+                expectedCustomer.getEmail(),
+                "password", updateAge,
+                expectedCustomer.getGender()
+                );
 
         webTestClient.put()
                 .uri(CUSTOMER_URI + "/{id}", id )
@@ -260,9 +249,9 @@ public class CustomerIntegrationTest {
                 id,
                 updateFirstName + " " + updateLastName,
                 email,
+                "password",
                 updateAge,
-                Gender.MALE
-        );
+                Gender.MALE);
 
         webTestClient.get()
                 .uri(CUSTOMER_URI + "/{id}", id )

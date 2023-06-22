@@ -58,9 +58,10 @@ class CustomerJPADataAccessServiceTest {
                  1,
                  "test",
                  "test@gmail.com",
+                 "password",
                  21,
                  Gender.MALE
-         );
+                 );
 
         // When
         underTest.insertCustomer(customer);

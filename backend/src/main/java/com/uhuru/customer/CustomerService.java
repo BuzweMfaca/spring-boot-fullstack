@@ -4,6 +4,7 @@ import com.uhuru.exception.DuplicateResourceException;
 import com.uhuru.exception.RequestValidationException;
 import com.uhuru.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,9 +13,11 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerDao customerDao;
+    private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao) {
+    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao, PasswordEncoder passwordEncoder) {
         this.customerDao = customerDao;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Customer> getAllCustomers(){
@@ -31,11 +34,17 @@ public class CustomerService {
 
     public void addCustomer(CustomerRegistrationRequest request){
 
-        if(customerDao.existPersonWithEmail(request.getEmail())){
+        if(customerDao.existPersonWithEmail(request.email())){
             throw new DuplicateResourceException("email already taken");
         }
 
-        Customer customer = new Customer(request.getName(), request.getEmail(), request.getAge(), Gender.valueOf(request.getGender()));
+        Customer customer = new Customer(
+                request.name(),
+                request.email(),
+                passwordEncoder.encode(request.password()),
+                request.age(),
+                request.gender());
+
         customerDao.insertCustomer(customer);
 
 
@@ -57,23 +66,24 @@ public class CustomerService {
 
         boolean changes = false;
 
-        if(request.getName() !=null && !request.getName().equals(customer.getName())){
-            customer.setName(request.getName());
+        if(request.name() !=null && !request.name().equals(customer.getName())){
+            customer.setName(request.name());
             changes = true;
         }
 
-        if(request.getAge() !=null && !request.getAge().equals(customer.getAge())){
-            customer.setAge(request.getAge());
+        if(request.age() !=null && !request.age().equals(customer.getAge())){
+            customer.setAge(request.age());
             changes = true;
         }
 
-        if(request.getEmail() !=null && !request.getEmail().equals(customer.getEmail())){
-            if(customerDao.existPersonWithEmail(request.getEmail())){
-                throw new DuplicateResourceException(
-                  "email already taken"
-                );
-            }
-            customer.setEmail(request.getEmail());
+        if(customerDao.existPersonWithEmail(request.email())){
+            throw new DuplicateResourceException(
+                    "email already taken"
+            );
+        }
+
+        if(request.email() !=null && !request.email().equals(customer.getEmail())){
+            customer.setEmail(request.email());
             changes = true;
         }
 

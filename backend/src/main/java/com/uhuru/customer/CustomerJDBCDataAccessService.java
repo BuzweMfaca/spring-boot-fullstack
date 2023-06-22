@@ -23,7 +23,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public List<Customer> selectAllCustomers() {
 
         String sql = """
-                        SELECT id, name, email, age, gender 
+                        SELECT id, name, email, password, age, gender 
                         FROM customer
                     """;
 
@@ -36,7 +36,7 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public Optional<Customer> selectCustomerById(Integer id) {
 
         String sql = """
-                        SELECT id, name, email, age , gender
+                        SELECT id, name, email, password, age , gender
                         FROM customer
                         Where id = ?
                     """;
@@ -51,14 +51,15 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
     public void insertCustomer(Customer customer) {
 
         String sql = """
-                        INSERT INTO customer(name, email, age, gender)
-                        VALUES(?,?,?,?)
+                        INSERT INTO customer(name, email, password, age, gender)
+                        VALUES(?,?,?,?, ?)
                      """;
 
         int result = jdbcTemplate.update(
                 sql,
                 customer.getName(),
                 customer.getEmail(),
+                customer.getPassword(),
                 customer.getAge(),
                 customer.getGender().name()
         );
@@ -121,6 +122,15 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
             jdbcTemplate.update(sql, customer.getEmail(),customer.getId());
         }
 
+        if(Objects.nonNull(customer.getEmail())){
+            String sql = """
+                            UPDATE customer SET password = ?
+                            WHERE id = ?
+                         """;
+            jdbcTemplate.update(sql, customer.getPassword(),customer.getId());
+
+        }
+
         if(Objects.nonNull(customer.getAge())){
             String sql = """
                             UPDATE customer SET age = ?
@@ -128,5 +138,18 @@ public class CustomerJDBCDataAccessService implements CustomerDao{
                          """;
             jdbcTemplate.update(sql, customer.getAge(),customer.getId());
         }
+    }
+
+    @Override
+    public Optional<Customer> selectUserByEmail(String email) {
+        String sql = """
+                        SELECT id, name, email, password, age , gender
+                        FROM customer
+                        Where email = ?
+                    """;
+
+        return jdbcTemplate.query(sql, customerRowMapper, email)
+                .stream()
+                .findFirst();
     }
 }

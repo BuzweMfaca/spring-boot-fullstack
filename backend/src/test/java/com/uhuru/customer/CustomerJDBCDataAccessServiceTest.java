@@ -32,7 +32,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 firstName + "." + lastName + "-" + UUID.randomUUID() + "@gmail.com",
-                20,
+                "password", 20,
                 Gender.MALE
 
         );
@@ -55,7 +55,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 email,
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -101,7 +101,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 firstName + "." + lastName + "-" + UUID.randomUUID() + "@gmail.com",
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -135,7 +135,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 email,
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -171,7 +171,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 firstName + "." + lastName + "-" + UUID.randomUUID() + "@gmail.com",
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -212,7 +212,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 firstName + "." + lastName + "-" + UUID.randomUUID() + "@gmail.com",
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -243,7 +243,7 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
         Customer customer = new Customer(
                 firstName + " " + lastName,
                 firstName + "." + lastName + "-" + UUID.randomUUID() + "@gmail.com",
-                20,
+                "password", 20,
                 Gender.MALE
         );
 
@@ -263,9 +263,10 @@ class CustomerJDBCDataAccessServiceTest extends AbstractTestcontainersUnitTest {
                 id,
                 updateFirstName + " " + updateLastName,
                 updateFirstName + " " + updateLastName + "-" + UUID.randomUUID() + "@gmail.com",
+                "password",
                 30,
-                Gender.MALE
-        );
+                Gender.MALE);
+
 
         underTest.updateCustomer(update);
 
