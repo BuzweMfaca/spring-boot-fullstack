@@ -1,7 +1,5 @@
 package com.uhuru.customer;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;

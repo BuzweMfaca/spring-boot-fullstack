@@ -8,25 +8,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
 
     private final CustomerDao customerDao;
+    private final CustomerDTOMapper customerDTOMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao, PasswordEncoder passwordEncoder) {
+    public CustomerService(@Qualifier("jdbc") CustomerDao customerDao, CustomerDTOMapper customerDTOMapper, PasswordEncoder passwordEncoder) {
         this.customerDao = customerDao;
+        this.customerDTOMapper = customerDTOMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<Customer> getAllCustomers(){
-        return customerDao.selectAllCustomers();
+    public List<CustomerDTO> getAllCustomers(){
+        return customerDao.selectAllCustomers()
+                .stream()
+                .map(customerDTOMapper)
+                .collect(Collectors.toList());
     }
 
 
-    public Customer getCustomer(Integer id){
+    public CustomerDTO getCustomer(Integer id){
         return customerDao.selectCustomerById(id)
+                .map(customerDTOMapper)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "customer with id [%s] not found".formatted(id)
                 ));
@@ -60,30 +67,32 @@ public class CustomerService {
     }
 
 
-    public void updateCustomer(Integer id, CustomerRegistrationRequest request){
+    public void updateCustomer(Integer customerId, CustomerUpdateRequest updateRequest){
 
-        Customer customer = getCustomer(id);
+        Customer customer = customerDao.selectCustomerById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "customer with id [%s] not found".formatted(customerId)
+                ));
 
         boolean changes = false;
 
-        if(request.name() !=null && !request.name().equals(customer.getName())){
-            customer.setName(request.name());
+        if(updateRequest.name() !=null && !updateRequest.name().equals(customer.getName())){
+            customer.setName(updateRequest.name());
             changes = true;
         }
 
-        if(request.age() !=null && !request.age().equals(customer.getAge())){
-            customer.setAge(request.age());
+        if(updateRequest.age() !=null && !updateRequest.age().equals(customer.getAge())){
+            customer.setAge(updateRequest.age());
             changes = true;
         }
 
-        if(customerDao.existPersonWithEmail(request.email())){
-            throw new DuplicateResourceException(
-                    "email already taken"
-            );
-        }
-
-        if(request.email() !=null && !request.email().equals(customer.getEmail())){
-            customer.setEmail(request.email());
+        if (updateRequest.email() != null && !updateRequest.email().equals(customer.getEmail())) {
+            if (customerDao.existPersonWithEmail(updateRequest.email())) {
+                throw new DuplicateResourceException(
+                        "email already taken"
+                );
+            }
+            customer.setEmail(updateRequest.email());
             changes = true;
         }
 

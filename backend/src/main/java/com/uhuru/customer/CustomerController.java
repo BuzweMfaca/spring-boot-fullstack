@@ -21,12 +21,12 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<Customer> getCustomers() {
+    public List<CustomerDTO> getCustomers() {
         return customerService.getAllCustomers();
     }
 
     @GetMapping("{customerId}")
-    public Customer getCustomers(
+    public CustomerDTO getCustomers(
             @PathVariable("customerId") Integer customerId ) {
         return customerService.getCustomer(customerId);
     }
@@ -54,9 +54,11 @@ public class CustomerController {
     @PutMapping("{customerId}")
     public void updateCustomer(
             @PathVariable("customerId") Integer customerId,
-            @RequestBody CustomerRegistrationRequest request
+            @RequestBody CustomerUpdateRequest updateRequest
     ){
-        customerService.updateCustomer(customerId, request);
+        customerService.updateCustomer(customerId, updateRequest);
     }
+
+
 
 }

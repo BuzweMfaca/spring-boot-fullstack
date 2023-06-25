@@ -33,11 +33,13 @@ class CustomerServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    private final CustomerDTOMapper customerDTOMapper = new CustomerDTOMapper();
+
 
     @BeforeEach
     void setUp() {
         //autoCloseable = MockitoAnnotations.openMocks(this);
-        underTest = new CustomerService(customerDao, passwordEncoder);
+        underTest = new CustomerService(customerDao, customerDTOMapper, passwordEncoder);
     }
 
 //    @AfterEach
@@ -70,11 +72,14 @@ class CustomerServiceTest {
 
         when(customerDao.selectCustomerById(customer.getId())).thenReturn(Optional.of(customer));
 
+        CustomerDTO expected = customerDTOMapper.apply(customer);
+
         // When
-        Customer actual = underTest.getCustomer(customer.getId());
+        CustomerDTO actual = underTest.getCustomer(customer.getId());
 
         // Then
-        assert(actual).equals(customer);
+        assert(actual).equals(expected);
+
     }
 
     @Test
@@ -205,7 +210,7 @@ class CustomerServiceTest {
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
         String newEmail = "Alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", newEmail, "password", 21, Gender.FEMALE);
+        CustomerUpdateRequest request = new CustomerUpdateRequest("Alex", newEmail, 21);
 
         when(customerDao.existPersonWithEmail(newEmail)).thenReturn(false);
 
@@ -242,11 +247,10 @@ class CustomerServiceTest {
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
         String newEmail = "Alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(
+        CustomerUpdateRequest request = new CustomerUpdateRequest(
             "Alex",
                 customer.getEmail(),
-                "password", customer.getAge(),
-                customer.getGender());
+                customer.getAge());
 
 
         // When
@@ -280,11 +284,10 @@ class CustomerServiceTest {
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
         String newEmail = "Alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(
+        CustomerUpdateRequest request = new CustomerUpdateRequest(
                 customer.getName(),
                 newEmail,
-                "password", customer.getAge(),
-                customer.getGender());
+                customer.getAge());
 
 
         when(customerDao.existPersonWithEmail(newEmail)).thenReturn(false);
@@ -320,11 +323,10 @@ class CustomerServiceTest {
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(
+        CustomerUpdateRequest request = new CustomerUpdateRequest(
                 customer.getName(),
                 customer.getEmail(),
-                "password", 21,
-                customer.getGender()
+                21
         );
 
 
@@ -360,7 +362,7 @@ class CustomerServiceTest {
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.empty());
 
         String newEmail = "Alex@gmail.com";
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest("Alex", newEmail, "password", 21, Gender.MALE);
+        CustomerUpdateRequest request = new CustomerUpdateRequest("Alex", newEmail, 21);
 
         // When
         assertThatThrownBy(() -> underTest.updateCustomer(id, request))
@@ -373,36 +375,23 @@ class CustomerServiceTest {
     }
 
     @Test
-    void willThrowErrorWhenUpdateCustomerEmailExists() {
+    void willThrowWhenTryingToUpdateCustomerEmailWhenAlreadyTaken() {
         // Given
-        int id = 11;
-
-        Customer customer = new Customer(
-                id,
-                "test",
-                "test@gmail.com",
-                "password",
-                19,
-                Gender.MALE);
-
+        int id = 10;
+        Customer customer = new Customer(id, "Alex", "alex@gmail.com", "password", 19, Gender.MALE);
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(
-            customer.getName(),
-            customer.getEmail(),
-                "password", customer.getAge(),
-            customer.getGender());
+        String newEmail = "alexandro@amigoscode.com";
 
-        when(customerDao.existPersonWithEmail(customer.getEmail())).thenReturn(true);
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(null, newEmail, null);
+
+        when(customerDao.existPersonWithEmail(newEmail)).thenReturn(true);
 
         // When
-        assertThatThrownBy(() -> underTest.updateCustomer(id, request))
-                .isInstanceOf(DuplicateResourceException.class)
-                .hasMessage("email already taken");
+        assertThatThrownBy(() -> underTest.updateCustomer(id, updateRequest)).isInstanceOf(DuplicateResourceException.class).hasMessage("email already taken");
 
         // Then
         verify(customerDao, never()).updateCustomer(any());
-
     }
 
     @Test
@@ -420,14 +409,13 @@ class CustomerServiceTest {
 
         when(customerDao.selectCustomerById(id)).thenReturn(Optional.of(customer));
 
-        CustomerRegistrationRequest request = new CustomerRegistrationRequest(
+        CustomerUpdateRequest updateRequest = new CustomerUpdateRequest(
                 customer.getName(),
                 customer.getEmail(),
-                "password", customer.getAge(),
-                customer.getGender());
+                customer.getAge());
 
         // When
-        assertThatThrownBy(() -> underTest.updateCustomer(id, request))
+        assertThatThrownBy(() -> underTest.updateCustomer(id, updateRequest))
                 .isInstanceOf(RequestValidationException.class)
                 .hasMessage("no data changes found");
 
